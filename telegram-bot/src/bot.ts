@@ -7,7 +7,12 @@ config();
 
 const BOT_TOKEN = process.env.DIRTYXPROXY_KEY || '';
 const WEBHOOK_URL = process.env.WEBHOOK_URL;
+const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL;
+const MAC_HOOK_URL = process.env.MAC_HOOK_URL; // URL for the Mac automation listener
+const MAC_HOOK_TOKEN = process.env.MAC_HOOK_TOKEN || 'nexus_secret_trigger_2026';
 const IS_VERCEL = !!process.env.VERCEL;
+
+
 
 if (!BOT_TOKEN) {
     console.error('❌ Error: DIRTYXPROXY_KEY not found in environment variables');
@@ -136,6 +141,29 @@ function formatStats(proxies: any[]): string {
         `*Top Countries:*\n${topCountries}`;
 }
 
+/**
+ * Send notification to Slack
+ */
+async function notifySlack(message: string) {
+    if (!SLACK_WEBHOOK_URL) return;
+
+    try {
+        await fetch(SLACK_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                text: message,
+                username: 'Nexus Scraper Bot',
+                icon_emoji: ':robot_face:'
+            })
+        });
+        console.log('✅ Slack notification sent');
+    } catch (error) {
+        console.error('❌ Failed to send Slack notification:', error);
+    }
+}
+
+
 // Command: /start
 bot.onText(/\/start/, async (msg) => {
     const chatId = msg.chat.id;
@@ -237,7 +265,38 @@ bot.onText(/\/export/, async (msg) => {
     });
 });
 
+// Command: /sync
+bot.onText(/\/sync/, async (msg) => {
+    const chatId = msg.chat.id;
+
+    if (!MAC_HOOK_URL) {
+        bot.sendMessage(chatId, '❌ *Sync Error:* `MAC_HOOK_URL` is not configured in Vercel.\n\nTo use this, expose your Mac using `ngrok` and add the URL to your Vercel Environment Variables.', { parse_mode: 'Markdown' });
+        return;
+    }
+
+    await bot.sendMessage(chatId, '🔄 *Triggering Remote Scrape on Mac...*', { parse_mode: 'Markdown' });
+
+    try {
+        const res = await fetch(`${MAC_HOOK_URL}/trigger`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-auth-token': MAC_HOOK_TOKEN
+            }
+        });
+
+        if (res.ok) {
+            bot.sendMessage(chatId, '✅ *Remote Trigger Accepted!*\nYour Mac is now scraping, validating, and pushing the results to GitHub. The bot will refresh automatically when done.', { parse_mode: 'Markdown' });
+        } else {
+            bot.sendMessage(chatId, `❌ *Trigger Failed:* Server returned ${res.status}`);
+        }
+    } catch (error) {
+        bot.sendMessage(chatId, '❌ *Connection Error:* Could not reach your Mac. Is `ngrok` running?');
+    }
+});
+
 // Error handling
+
 bot.on('polling_error', (error) => {
     console.error('Polling error:', error);
 });
@@ -281,6 +340,22 @@ app.get('/api/proxies', async (req, res) => {
 app.get('/api/stats', (req, res) => {
     res.json(validationStats);
 });
+
+// Deployment/Automation Hook
+app.post('/api/webhook/sync', async (req, res) => {
+    console.log('🔄 Sync webhook triggered');
+    const proxies = await loadProxies();
+
+    // Notify Slack about the sync
+    await notifySlack(`🔄 *System Sync Triggered*\nLoaded ${proxies.length} proxies to the bot.`);
+
+    res.json({
+        success: true,
+        count: proxies.length,
+        timestamp: new Date().toISOString()
+    });
+});
+
 
 
 
