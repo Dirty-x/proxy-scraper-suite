@@ -381,7 +381,12 @@
             font-size: 0.8em;
         }
 
+        .clickable {
+            cursor: pointer;
+        }
+
         .verified-badge {
+
             background: rgba(0, 255, 0, 0.1);
             color: #00ff00;
             border-color: #00ff00;
@@ -575,17 +580,18 @@
                     const displayDate = isNaN(date.getTime()) ? session.id : date.toLocaleString();
 
                     return `
-                        <div class="history-item" onclick="loadSession('${session.id}')" style="cursor: pointer;">
+                        <div class="history-item clickable" onclick="loadSession('${session.id}')">
                             <div class="history-info">
                                 <div class="history-date">Session Archive</div>
                                 <div class="history-id">${session.id}</div>
                             </div>
-                            <div style="display: flex; align-items: center; gap: 1rem;">
+                            <div class="header-actions">
                                 <span class="badge">Open Archive</span>
                             </div>
                         </div>
                     `;
                 }).join('');
+
             } catch (err) {
                 list.innerHTML = '<div class="error-state">Failed to load history.</div>';
                 console.error(err);
