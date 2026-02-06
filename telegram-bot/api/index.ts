@@ -54,6 +54,15 @@ async function loadProxies(): Promise<any[]> {
                 const data = await readFile(path, 'utf-8');
                 proxyCache = JSON.parse(data);
                 console.log(`✅ Loaded proxies from: ${path}`);
+
+                // Update validation stats based on loaded data
+                validationStats = {
+                    total: proxyCache.length,
+                    valid: proxyCache.filter(p => !p.error).length,
+                    invalid: proxyCache.filter(p => p.error).length,
+                    lastUpdate: new Date().toISOString()
+                };
+
                 return proxyCache;
             } catch (e) {
                 // Continue to next path
@@ -350,6 +359,18 @@ app.get('/api/proxies', async (req, res) => {
 // Dashboard API: Get stats
 app.get('/api/stats', (req, res) => {
     res.json(validationStats);
+});
+
+// Dashboard API: Get history (Mock)
+app.get('/api/history', (req, res) => {
+    res.json([
+        { id: 'current-session' }
+    ]);
+});
+
+app.get('/api/history/:id', async (req, res) => {
+    const proxies = await loadProxies();
+    res.json(proxies);
 });
 
 // Deployment/Automation Hook
