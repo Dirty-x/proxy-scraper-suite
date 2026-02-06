@@ -2,12 +2,12 @@
     "name": "proxy-scraper-telegram-bot",
     "version": "1.0.0",
     "description": "Telegram bot for proxy scraper",
-    "main": "dist/bot.js",
+    "main": "api/index.js",
     "type": "module",
     "scripts": {
-        "dev": "tsx src/bot.ts",
-        "build": "tsc",
-        "start": "node dist/bot.js"
+        "dev": "tsx api/index.ts",
+        "build": "echo 'Vercel will handle the build automatically'",
+        "start": "node api/index.js"
     },
     "dependencies": {
         "node-telegram-bot-api": "^0.66.0",
