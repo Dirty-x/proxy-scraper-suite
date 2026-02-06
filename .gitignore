@@ -1,0 +1,20 @@
+# Node
+node_modules/
+dist/
+.vercel/
+.snapshots/
+*.log
+
+# Secrets
+.env
+telegram-bot/.env
+results.json
+telegram-bot/results.json
+telegram-bot/src/results.json
+
+# Storage
+storage/
+proxy-results/
+
+# OS
+.DS_Store

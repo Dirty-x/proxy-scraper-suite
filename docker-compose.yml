@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  proxy-scraper:
+    build: .
+    container_name: proxy-scraper
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./storage:/app/storage
+    environment:
+      - NODE_ENV=production
+      - LOG_LEVEL=info
+    restart: on-failure

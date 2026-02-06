@@ -1,0 +1,40 @@
+{
+  "name": "proxy-scraper-rewrite",
+  "version": "0.0.1",
+  "type": "module",
+  "description": "Enterprise-grade standalone proxy scraper and validator.",
+  "dependencies": {
+    "@devhigley/test-proxy": "^1.1.1",
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0-rc.12",
+    "crawlee": "^3.1.0",
+    "express": "^5.2.1",
+    "hpagent": "^1.1.0",
+    "nanolith": "^0.1.2",
+    "socket.io": "^4.8.3",
+    "socks-proxy-agent": "^8.0.0",
+    "tiny-typed-emitter": "^2.1.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/cheerio": "^0.22.31",
+    "@types/express": "^5.0.6",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.10.0",
+    "@types/socket.io": "^3.0.1",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.1",
+    "type-fest": "^3.1.0",
+    "typescript": "^5.3.0"
+  },
+  "scripts": {
+    "start": "tsc && npm run start:prod",
+    "start:prod": "node dist/main.js",
+    "start:dev": "ts-node-esm -T src/main.ts",
+    "build": "tsc",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "author": "It's not you it's me",
+  "license": "ISC"
+}

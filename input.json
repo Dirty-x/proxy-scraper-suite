@@ -1,0 +1,10 @@
+{
+    "proxy": {
+        "useCloudProxy": false
+    },
+    "runTests": true,
+    "testWorkers": 5,
+    "debug": false,
+    "concurrency": 10,
+    "kvStoreName": "default"
+}
