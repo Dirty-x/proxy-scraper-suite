@@ -13,7 +13,8 @@ npm start
 
 # 2. Sync to Bot Folder
 echo "📦 Phase 2: Updating Bot Cache..."
-cp "$PROJECT_DIR/results.json" "$PROJECT_DIR/telegram-bot/src/results.json"
+cp "$PROJECT_DIR/results.json" "$PROJECT_DIR/telegram-bot/results.json"
+
 
 # 3. Commit and Push to GitHub
 echo "📤 Phase 3: Pushing to GitHub..."

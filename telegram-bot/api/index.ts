@@ -39,13 +39,14 @@ async function loadProxies(): Promise<any[]> {
     try {
         // Try multiple paths to find proxies (local vs relative)
         const paths = [
-            join(process.cwd(), 'results.json'),           // Root of project
-            join(process.cwd(), 'src/results.json'),       // Inside src
-            join(process.cwd(), '../storage/proxy-results/results.json'), // Local dev
+            join(process.cwd(), 'results.json'),           // Vercel root
+            join(process.cwd(), 'api/results.json'),       // Local dev
+            join(process.cwd(), '../results.json'),       // Local dev (up one)
             join(new URL('.', import.meta.url).pathname, 'results.json'), // Next to script
-            '/var/task/results.json',                      // Vercel raw path
-            '/var/task/src/results.json'                   // Vercel src path
+            join(new URL('.', import.meta.url).pathname, '../results.json'), // Up from script
+            '/var/task/results.json'                      // Vercel standard path
         ];
+
 
 
         for (const path of paths) {
