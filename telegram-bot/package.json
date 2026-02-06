@@ -6,7 +6,6 @@
     "type": "module",
     "scripts": {
         "dev": "tsx api/index.ts",
-        "build": "echo 'Vercel will handle the build automatically'",
         "start": "node api/index.js"
     },
     "dependencies": {
