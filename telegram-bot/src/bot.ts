@@ -323,7 +323,17 @@ import express from 'express';
 const app = express();
 app.use(express.json());
 
+// Add CORS headers for the dashboard
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, x-auth-token');
+    if (req.method === 'OPTIONS') return res.sendStatus(200);
+    next();
+});
+
 app.post('/api/bot', (req, res) => {
+
     console.log('✉️ Received update from Telegram');
     bot.processUpdate(req.body);
     // Give the bot a moment to start processing before closing the connection
