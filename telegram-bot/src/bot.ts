@@ -1,6 +1,6 @@
 import TelegramBot from 'node-telegram-bot-api';
 import { config } from 'dotenv';
-import { readFile } from 'fs/promises';
+import { readFile, readdir } from 'fs/promises';
 import { join } from 'path';
 
 config();
@@ -55,7 +55,19 @@ async function loadProxies(): Promise<any[]> {
         }
 
         console.warn('⚠️ No proxy file found in any known locations.');
+
+        try {
+            console.log('🔍 CWD:', process.cwd());
+            const files = await readdir(process.cwd());
+            console.log('📦 CWD Content:', JSON.stringify(files));
+            if (files.includes('src')) {
+                const srcFiles = await readdir(join(process.cwd(), 'src'));
+                console.log('📦 src Content:', JSON.stringify(srcFiles));
+            }
+        } catch (e) { }
+
         return [];
+
     } catch (error) {
         console.error('Failed to load proxies:', error);
         return [];
@@ -258,6 +270,18 @@ app.post('/api/bot', (req, res) => {
     // Give the bot a moment to start processing before closing the connection
     setTimeout(() => res.sendStatus(200), 500);
 });
+
+// Dashboard API: Get all proxies
+app.get('/api/proxies', async (req, res) => {
+    const proxies = await loadProxies();
+    res.json(proxies);
+});
+
+// Dashboard API: Get stats
+app.get('/api/stats', (req, res) => {
+    res.json(validationStats);
+});
+
 
 
 // For local testing of the express server if needed
